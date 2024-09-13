@@ -90,11 +90,18 @@ yes_no(){
 
 }
 nvim(){
-
+if which nvim > /dev/null ;then
 git clone https://github.com/breeze0909/linux_script
 cd linux_script
 cp nvim ~/.config
+else
+    #download
+     gum spin --title "Downloading..." -- sleep 5
 
+    sudo pacman -S neovim
+git clone https://github.com/breeze0909/linux_script
+cd linux_script
+cp nvim ~/.config
 
 }
 debian_pkm(){
@@ -173,6 +180,11 @@ else
     #download
     gum spin --title "Downloading..." -- sleep 5
     sudo pacman -S kitty
+    git clone https://github.com/breeze0909/linux_script
+cd linux_script/kitty
+cp kitty.conf ~/.config/kitty
+
+
 fi
 }
 
@@ -190,7 +202,7 @@ fi
 
 
 while [ "$option" != "exit" ];do
-option=$(gum choose "setup_from_scratch" "bash" "kitty" "exit")
+option=$(gum choose "setup_from_scratch" "bash" "kitty" "nvim" "exit")
 
 case $option in
 
@@ -215,6 +227,9 @@ alias
 kitty
 
 ;;
+"nvim")
+nvim
+    ;;
 "exit")
 echo "exiting.."
 exit 0
