@@ -1,0 +1,224 @@
+#!/bin/bash
+
+#check_os find a way to dtermine the  os  arch or deb or fed
+gum style \
+	--foreground 300 --border-foreground 300 --border double \
+	--align center --width 50 --margin "1 2" --padding "2 4" \
+	'Welcome to breeze scripts' 'All for one One for all'
+starship(){
+
+echo "lets Install starship..."
+gum spin --title "Downloading..." -- sleep 5
+sudo pacman -S starship
+}
+starship2(){
+echo 'eval "$(starship init bash)"' >> .bashrc
+a=$(starship preset pure-preset -o ~/.config/starship.toml)
+
+
+
+}
+bashrc(){
+
+rm .bashrc
+touch .bashrc
+ cp /etc/skel/.bashrc ~/.bashrc
+echo "source .bash_aliases">> .bashrc
+echo "acpi" >> .bashrc
+
+
+
+}
+
+bashalias(){
+    cd ~
+rm .bash_aliases
+touch .bash_aliases
+echo "alias q='exit'" >> .bash_aliases
+echo "alias ins='sudo pacman -S'" >> .bash_aliases
+
+
+}
+check_os(){
+a=$(lsb_release -a | grep -e '^Distributor ID:.*'| awk -F ":" '{print $2}')
+echo $a
+}
+acpi(){
+if which acpi > /dev/null ;then
+ echo "already installed acpi"
+else
+gum spin --title "Downloading..." -- sleep 5
+    sudo pacman -S acpi
+fi
+}
+alias(){
+if [ -f ~/.bash_aliases ];then
+
+        acpi
+	bashalias
+    	return 0
+else
+	 echo "bash_aliases not found"
+         read -p "want to make the file?[y/N]" op
+		if [ "$op" == "y" ] || [ "$op" == "Y" ]
+			then
+
+	 	         	 cd
+ 				 touch .bash_aliases
+	                         acpi
+               		         bashalias
+                                 bashrc
+				return 0
+		elif [ "$op" == "n" ]  || [ "$op" == "N" ]
+			then
+		        	echo "aborting...."
+		fi
+fi
+}
+yes_no(){
+
+ if [ "$1" == "y" ] || [ "$1" == "Y" ]
+                        then
+			echo "lets proceed"
+                        return 0
+
+                elif [ "$1" == "n" ]  || [ "$1" == "N" ]
+                        then
+                                echo "aborting...."
+               			return 1
+                          fi
+
+}
+nvim(){
+
+#git clone https://github.com/breeze0909/nvim_linux.git
+cd ~/.config
+mkdir -p nvim
+cd
+cp nvim ~/.config/nvim
+
+}
+debian_pkm(){
+
+for pkgs in "$@";do
+
+
+read -p "Proceed with installation of $pkgs ?[y/N]" op
+yes_no $op
+#local a=$?
+if [ $? -eq 0 ];then
+  sudo apt-get install $pkgs
+fi
+
+done
+
+}
+arch_pkm(){
+
+for pkgs in "$@";do
+
+
+read -p "Proceed with installation of $pkgs ?[y/N]" op
+yes_no $op
+#local a=$?
+if [ $? -eq 0 ];then
+  gum spin --spinner dot --title "Downloading..." -- sleep 5
+
+   sudo pacman -S $pkgs
+fi
+
+done
+}
+ask_pkg(){
+  pkm=$(gum choose --limit 1 "Arch" "debian" "Nix" --header "What pkg manager do you use?")
+  case $pkm in
+
+  "debian")
+  echo "ok lets install in deb"
+  unset pkm
+  read -p "what pkgs u want?" pkm
+  # gum spin --title "Downloading..." -- sleep 5
+  debian_pkm $pkm
+  ;;
+  "nix")
+  echo "ok nix"
+  unset pkm
+  read -p "what pkgs u want?" pkm
+
+   #nix_pkm
+   ;;
+   "Arch")
+   echo "letgs goo arch"
+   #bug it does not work in recursion
+
+   unset pkm
+   read -p "what pkgs u want?" pkm
+#gum spin --title "Downloading..." -- sleep 5
+   arch_pkm $pkm
+
+   ;;
+   *)
+   echo "going with the default os pkm"
+   echo -e "$(check_os)" | ask_pkg
+   ;;
+   esac
+}
+kitty(){
+if which kitty > /dev/null ;then
+#git clone https://github.com/breeze0909/kitty
+cd kitty
+cp kitty.conf ~/.config/kitty
+
+echo "kitty conf set"
+fi
+}
+
+#upload nvim to github and clone here
+
+
+
+#Main
+if which gum > /dev/null ;then
+echo "lets go"
+else
+echo "gum is not installed please do so"
+fi
+
+
+
+while [ "$option" != "exit" ];do
+option=$(gum choose "setup_from_scratch" "bash" "kitty" "exit")
+
+case $option in
+
+
+#uncomment these to work
+"setup_from_scratch")
+#ask_pkg
+
+acpi
+alias
+#starship
+#starhsip2
+#kitty
+
+;;
+ "bash")
+#  alias
+ # starship
+ # starship2
+;;
+"kitty")
+#kitty
+
+;;
+"exit")
+echo "exiting.."
+exit 0
+;;
+*)
+echo " "
+;;
+
+esac
+done
