@@ -1,0 +1,2 @@
+ a=$(ps -ae | grep fire | awk '{print $1}')
+
