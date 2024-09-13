@@ -91,11 +91,10 @@ yes_no(){
 }
 nvim(){
 
-#git clone https://github.com/breeze0909/nvim_linux.git
-cd ~/.config
-mkdir -p nvim
-cd
-cp nvim ~/.config/nvim
+git clone https://github.com/breeze0909/linux_script
+cd linux_script
+cp nvim ~/.config
+
 
 }
 debian_pkm(){
@@ -165,11 +164,15 @@ ask_pkg(){
 }
 kitty(){
 if which kitty > /dev/null ;then
-#git clone https://github.com/breeze0909/kitty
-cd kitty
+git clone https://github.com/breeze0909/linux_script
+cd linux_script/kitty
 cp kitty.conf ~/.config/kitty
 
 echo "kitty conf set"
+else
+    #download
+    gum spin --title "Downloading..." -- sleep 5
+    sudo pacman -S kitty
 fi
 }
 
@@ -209,7 +212,7 @@ alias
  # starship2
 ;;
 "kitty")
-#kitty
+kitty
 
 ;;
 "exit")
