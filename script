@@ -102,7 +102,7 @@ else
 git clone https://github.com/breeze0909/linux_script
 cd linux_script
 cp nvim ~/.config
-
+fi
 }
 debian_pkm(){
 
